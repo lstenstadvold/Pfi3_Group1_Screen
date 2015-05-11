@@ -6,6 +6,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 public class Logic {
 	
@@ -43,7 +44,48 @@ public class Logic {
 		//Create one child for each member of the treasureLocations array and sets the child active to 0
 		for (TreasureLocation tl : treasureLocations){
 			firebase.child(tl.getId()+"/active").setValue(0);
+			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
+
+				@Override
+				public void onDataChange(DataSnapshot snapshot) {
+					System.out.println(snapshot.getValue());
+				}
+				
+				@Override
+				public void onCancelled(FirebaseError error) {
+					// TODO Auto-generated method stub	
+				}
+			});
 		}
+		
+		
+		//Create a listener (that excludes LightCue? Maybe LightCue can be created by Arduino/RasPi?)
+		firebase.addChildEventListener(new ChildEventListener() {
+			
+			@Override
+			public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
+				System.out.println("Changed");
+				
+			}
+			
+			//Unused overrides
+			@Override
+			public void onChildRemoved(DataSnapshot arg0) {
+			}
+			@Override
+			public void onChildMoved(DataSnapshot arg0, String arg1) {
+			}
+			@Override
+			public void onChildAdded(DataSnapshot arg0, String arg1) {
+			}
+			@Override
+			public void onCancelled(FirebaseError arg0) {
+			}
+		});
+		
+		
 	}
+	
+	
 	
 }
