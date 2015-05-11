@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 
 public class GUI extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+
 	private JPanel contentPane;
 
 	/**
@@ -37,6 +39,9 @@ public class GUI extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+		Logic logic = new Logic();
+		
 	}
 
 }
