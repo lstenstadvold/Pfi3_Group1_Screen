@@ -67,9 +67,9 @@ public class Logic {
 		for (final TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				activeCount++;
-				System.out.println("NbrOfActiveQR: "+activeCount);
 			}
 		}
+		System.out.println("NbrOfActiveQR: "+activeCount);
 		
 		while(activeCount < Constants.MAX_ACTIVE){
 			int item = generateRandomTreasureLocation();
@@ -90,7 +90,7 @@ public class Logic {
 	
 	public int generateRandomTreasureLocation(){
 		Random rand = new Random();
-	    int randomNum = rand.nextInt((treasureLocations.size()) + 1);
+	    int randomNum = rand.nextInt((treasureLocations.size()));
 	    return randomNum;
 	}
 	

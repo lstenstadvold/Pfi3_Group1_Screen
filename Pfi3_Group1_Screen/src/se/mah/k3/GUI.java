@@ -41,7 +41,10 @@ public class GUI extends JFrame {
 		setContentPane(contentPane);
 		
 		Logic logic = new Logic();
+		
+		//These two methods are probably just for testing
 		logic.generateTreasureLocations();
+		logic.updateFirebase();
 	}
 
 }
