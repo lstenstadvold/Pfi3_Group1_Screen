@@ -13,16 +13,15 @@ public class Logic {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private ArrayList<TreasureLocation> treasureLocations = new ArrayList<TreasureLocation>();	
-	private Firebase firebase;
+	private ArrayList<TreasureLocation> treasureLocations = new ArrayList<TreasureLocation>(); //Stores all TreasureLocation objects
+	private Firebase firebase; //Stores the Firebase referens. See Constants for the address. 
 	
-	
-	public Logic() {
-		
+	//Constructor. Runs when created.
+	public Logic() {	
 		setupTreasureLocations();
-		setupFirebase();
-			
+		setupFirebase();		
 	}
+	
 	
 	//Add all treasure locations to the treasureLocations array. If we want more treasure locations we add them here
 	public void setupTreasureLocations(){
@@ -35,10 +34,12 @@ public class Logic {
 		treasureLocations.add(new TreasureLocation("TL05",300,100));
 	}
 	
+	
 	//Create a referens to firebase and sets all default values. Run in the start of a program.
 	public void setupFirebase(){			
 		
-		firebase = new Firebase(Constants.FIREBASE_URL); //Instantiating the firebase referens with our firebase url
+		
+		firebase = new Firebase(Constants.FIREBASE_URL); //Instantiating the firebase referens with our firebase url. See Constants
 		firebase.removeValue(); //Empties the whole firebase app
 		firebase.child("LightCue").setValue(0);//Create the LightCue child	
 		
@@ -46,17 +47,24 @@ public class Logic {
 		for (final TreasureLocation tl : treasureLocations){
 			firebase.child(tl.getId()+"/active").setValue(0);
 			
+			//For every child('id'/active) we initiate a valueEventListener
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
+				
+				//This method is executed every time the 'id'/active value is changed
 				@Override
-				public void onDataChange(DataSnapshot snapshot) {
+				public void onDataChange(DataSnapshot snapshot) {				
+					//updateTreasureLocations(tl, extractType(tl.getId()+snapshot.getValue()));				
 					
-					updateTreasureLocations(tl, extractType(tl.getId()+snapshot.getValue()));
+					//generateTreasureLocation();
 					
-					generateTreasureLocations();
-					updateFirebase();
+					//generateTreasureLocations();
+					//updateFirebase();
 					//updateMap();
-					System.out.println(tl.getId()+snapshot.getValue());
+					
+					System.out.println(snapshot.getKey()+" "+extractType(snapshot.getValue().toString()));
+
 				}
+				
 				@Override
 				public void onCancelled(FirebaseError error) {
 					// TODO Auto-generated method stub	
@@ -70,6 +78,7 @@ public class Logic {
 		for (TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				activeCount++;
+				System.out.println(tl.getId()+" is active");
 			}
 		}
 		System.out.println("NbrOfActiveQR: "+activeCount);
@@ -89,6 +98,14 @@ public class Logic {
 		}
 	}
 	
+	public void generateTreasureLocation(){
+		for (TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				System.out.println(tl.getId()+" is active");
+			}
+		}		
+	}
+	
 	public int generateRandomTreasureLocation(){
 		Random rand = new Random();
 	    int randomNum = rand.nextInt((treasureLocations.size()));
@@ -103,15 +120,19 @@ public class Logic {
 	
 	public void updateTreasureLocations(TreasureLocation tl, int type){
 		tl.setType(type);
+		System.out.println(tl.getId()+" of type "+tl.getType());
 		if(type == 0){
 			tl.setActive(false);
+			System.out.println(" is inactive");
 		} else {
 			tl.setActive(true);
+			System.out.println(" is active");
 		}
 	}
 	
-	public int extractType(String str){
-		int type = str.charAt(8);	
+	//Returns a char which in turn can be converted to an int
+	public char extractType(String str){
+		char type = str.charAt(8);	
 		return type;
 	}
 	
@@ -129,6 +150,14 @@ public class Logic {
 				int x = tl.getPosX();
 				int y = tl.getPosY();
 				//hur skriver vi dessa till en punkt på kartan?
+			}
+		}
+	}
+	
+	public void updateInfo(){
+		for (TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				System.out.println(tl.getId()+" is active and type "+tl.getType());
 			}
 		}
 	}
