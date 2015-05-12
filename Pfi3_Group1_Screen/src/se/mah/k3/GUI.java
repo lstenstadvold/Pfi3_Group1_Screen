@@ -41,7 +41,7 @@ public class GUI extends JFrame {
 		setContentPane(contentPane);
 		
 		Logic logic = new Logic();
-		
+		logic.generateTreasureLocations();
 	}
 
 }

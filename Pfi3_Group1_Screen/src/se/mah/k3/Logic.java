@@ -47,20 +47,13 @@ public class Logic {
 			firebase.child(tl.getId()+"/active").setValue(0);
 			
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
-
-				
 				@Override
 				public void onDataChange(DataSnapshot snapshot) {
-					
 					//generateTreasureLocations();
 					//updateFirebase();
 					//updateMap();
-
 					System.out.println(tl.getId()+snapshot.getValue());
-				
 				}
-				
-				
 				@Override
 				public void onCancelled(FirebaseError error) {
 					// TODO Auto-generated method stub	
@@ -74,6 +67,7 @@ public class Logic {
 		for (final TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				activeCount++;
+				System.out.println("NbrOfActiveQR: "+activeCount);
 			}
 		}
 		
@@ -87,8 +81,9 @@ public class Logic {
 				treasureLocations.get(item).setActive(true);
 				treasureLocations.get(item).setType(type);
 				activeCount++;
+				System.out.println("New treasure generated: "+treasureLocations.get(item).getId()+" "+treasureLocations.get(item).getType());
 			}
-		}	
+		}
 	}
 	
 	
