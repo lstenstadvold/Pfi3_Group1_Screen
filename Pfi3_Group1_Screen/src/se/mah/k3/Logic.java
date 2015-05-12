@@ -48,12 +48,18 @@ public class Logic {
 			
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
 
+				
 				@Override
 				public void onDataChange(DataSnapshot snapshot) {
 					
+					//generateTreasureLocations();
+					//updateFirebase();
+					//updateMap();
+
 					System.out.println(tl.getId()+snapshot.getValue());
 				
 				}
+				
 				
 				@Override
 				public void onCancelled(FirebaseError error) {
@@ -61,46 +67,60 @@ public class Logic {
 				}
 			});
 		}
-		
-		/*
-		//Create a listener (that excludes LightCue? Maybe LightCue can be created by Arduino/RasPi?)
-		firebase.addChildEventListener(new ChildEventListener() {			
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
-				System.out.println("Changed");
-			}
-			
-			//Unused overrides
-			@Override
-			public void onChildRemoved(DataSnapshot arg0) {
-			}
-			@Override
-			public void onChildMoved(DataSnapshot arg0, String arg1) {
-			}
-			@Override
-			public void onChildAdded(DataSnapshot arg0, String arg1) {
-			}
-			@Override
-			public void onCancelled(FirebaseError arg0) {
-			}
-		});
-		*/
-		
 	}
 	
-	public void updateTreasureLocations(){
+	public void generateTreasureLocations(){
+		int activeCount = 0;
+		for (final TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				activeCount++;
+			}
+		}
 		
+		while(activeCount < Constants.MAX_ACTIVE){
+			int item = generateRandomTreasureLocation();
+			int type = generateRandomTreasureType();
+
+			if(treasureLocations.get(item).getActive()) { //already active
+				
+			} else { //not active, sets to active and give random type
+				treasureLocations.get(item).setActive(true);
+				treasureLocations.get(item).setType(type);
+				activeCount++;
+			}
+		}	
 	}
 	
-	public int generateRandomTreasureLocations(){
+	
+	
+	public int generateRandomTreasureLocation(){
 		Random rand = new Random();
 	    int randomNum = rand.nextInt((treasureLocations.size()) + 1);
 	    return randomNum;
 	}
 	
+	public int generateRandomTreasureType(){
+		Random rand = new Random();
+	    int randomNum = rand.nextInt(Constants.NBR_TYPES) + 1;
+	    return randomNum;
+	}
 	
-	public void drawMap(){
-		
+	public void updateFirebase(){
+		for (final TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				firebase.child(tl.getId()+"/active").setValue(tl.getType());
+			}
+		}
+	}
+	
+	public void updateMap(){
+		for (final TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				int x = tl.getPosX();
+				int y = tl.getPosY();
+				//hur skriver vi dessa till en punkt på kartan?
+			}
+		}
 	}
 	
 }

@@ -23,8 +23,16 @@ public class TreasureLocation {
 		return this.active;
 	}
 	
+	public void setActive(boolean bool){
+		this.active = bool;
+	}
+	
 	public int getType(){
 		return this.type;
+	}
+	
+	public void setType(int type){
+		this.type = type;
 	}
 	
 	public int getPosX(){
