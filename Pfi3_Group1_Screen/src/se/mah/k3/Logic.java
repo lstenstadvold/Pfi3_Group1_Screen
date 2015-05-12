@@ -49,8 +49,11 @@ public class Logic {
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot snapshot) {
-					//generateTreasureLocations();
-					//updateFirebase();
+					
+					updateTreasureLocations(tl, extractType(tl.getId()+snapshot.getValue()));
+					
+					generateTreasureLocations();
+					updateFirebase();
 					//updateMap();
 					System.out.println(tl.getId()+snapshot.getValue());
 				}
@@ -64,7 +67,7 @@ public class Logic {
 	
 	public void generateTreasureLocations(){
 		int activeCount = 0;
-		for (final TreasureLocation tl : treasureLocations){
+		for (TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				activeCount++;
 			}
@@ -86,8 +89,6 @@ public class Logic {
 		}
 	}
 	
-	
-	
 	public int generateRandomTreasureLocation(){
 		Random rand = new Random();
 	    int randomNum = rand.nextInt((treasureLocations.size()));
@@ -100,8 +101,22 @@ public class Logic {
 	    return randomNum;
 	}
 	
+	public void updateTreasureLocations(TreasureLocation tl, int type){
+		tl.setType(type);
+		if(type == 0){
+			tl.setActive(false);
+		} else {
+			tl.setActive(true);
+		}
+	}
+	
+	public int extractType(String str){
+		int type = str.charAt(8);	
+		return type;
+	}
+	
 	public void updateFirebase(){
-		for (final TreasureLocation tl : treasureLocations){
+		for (TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				firebase.child(tl.getId()+"/active").setValue(tl.getType());
 			}
@@ -109,7 +124,7 @@ public class Logic {
 	}
 	
 	public void updateMap(){
-		for (final TreasureLocation tl : treasureLocations){
+		for (TreasureLocation tl : treasureLocations){
 			if(tl.getActive()){
 				int x = tl.getPosX();
 				int y = tl.getPosY();
