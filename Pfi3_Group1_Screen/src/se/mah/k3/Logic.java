@@ -1,6 +1,7 @@
 package se.mah.k3;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -42,13 +43,16 @@ public class Logic {
 		firebase.child("LightCue").setValue(0);//Create the LightCue child	
 		
 		//Create one child for each member of the treasureLocations array and sets the child active to 0
-		for (TreasureLocation tl : treasureLocations){
+		for (final TreasureLocation tl : treasureLocations){
 			firebase.child(tl.getId()+"/active").setValue(0);
+			
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
 
 				@Override
 				public void onDataChange(DataSnapshot snapshot) {
-					System.out.println(snapshot.getValue());
+					
+					System.out.println(tl.getId()+snapshot.getValue());
+				
 				}
 				
 				@Override
@@ -58,14 +62,12 @@ public class Logic {
 			});
 		}
 		
-		
+		/*
 		//Create a listener (that excludes LightCue? Maybe LightCue can be created by Arduino/RasPi?)
-		firebase.addChildEventListener(new ChildEventListener() {
-			
+		firebase.addChildEventListener(new ChildEventListener() {			
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
 				System.out.println("Changed");
-				
 			}
 			
 			//Unused overrides
@@ -82,10 +84,23 @@ public class Logic {
 			public void onCancelled(FirebaseError arg0) {
 			}
 		});
-		
+		*/
 		
 	}
 	
+	public void updateTreasureLocations(){
+		
+	}
 	
+	public int generateRandomTreasureLocations(){
+		Random rand = new Random();
+	    int randomNum = rand.nextInt((treasureLocations.size()) + 1);
+	    return randomNum;
+	}
+	
+	
+	public void drawMap(){
+		
+	}
 	
 }
