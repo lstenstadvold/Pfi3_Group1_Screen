@@ -2,6 +2,7 @@ package se.mah.k3;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -13,8 +14,10 @@ public class Logic {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private ArrayList<TreasureLocation> treasureLocations = new ArrayList<TreasureLocation>(); //Stores all TreasureLocation objects
+	public static Vector<TreasureLocation> treasureLocations = new Vector<TreasureLocation>(); //Stores all TreasureLocation objects
 	private Firebase firebase; //Stores the Firebase referens. See Constants for the address. 
+	
+	private int activeTreasureCount = 0;
 	
 	//Constructor. Runs when created.
 	public Logic() {	
@@ -44,8 +47,9 @@ public class Logic {
 		firebase.child("LightCue").setValue(0);//Create the LightCue child	
 		
 		//Create one child for each member of the treasureLocations array and sets the child active to 0
-		for (final TreasureLocation tl : treasureLocations){
+		for (TreasureLocation tl : treasureLocations){
 			firebase.child(tl.getId()+"/active").setValue(0);
+			
 			
 			//For every child('id'/active) we initiate a valueEventListener
 			firebase.child(tl.getId()).addValueEventListener(new ValueEventListener() {
@@ -53,18 +57,22 @@ public class Logic {
 				//This method is executed every time the 'id'/active value is changed
 				@Override
 				public void onDataChange(DataSnapshot snapshot) {				
-					//updateTreasureLocations(tl, extractType(tl.getId()+snapshot.getValue()));				
 					
-					//generateTreasureLocation();
 					
-					//generateTreasureLocations();
+					updateTreasureInArray(snapshot.getKey(), extractType(snapshot.getValue().toString()));
+					
+					//GUI.drawMarkers();
+					
+					
+					System.out.println(snapshot.getKey()+" "+extractType(snapshot.getValue().toString()));
+					
 					//updateFirebase();
 					//updateMap();
 					
-					System.out.println(snapshot.getKey()+" "+extractType(snapshot.getValue().toString()));
-
+					
 				}
 				
+				//Not used
 				@Override
 				public void onCancelled(FirebaseError error) {
 					// TODO Auto-generated method stub	
@@ -73,17 +81,77 @@ public class Logic {
 		}
 	}
 	
-	public void generateTreasureLocations(){
-		int activeCount = 0;
+	
+	////////////////////////////////////////////////////////////////////////////
+	
+	public void updateTreasureInArray(String id, String type){		
 		for (TreasureLocation tl : treasureLocations){
-			if(tl.getActive()){
-				activeCount++;
-				System.out.println(tl.getId()+" is active");
+			if(tl.getId() == id){
+				tl.setType(Integer.parseInt(type));
+				if(Integer.parseInt(type) == 0){
+					tl.setActive(false);
+				} else {
+					tl.setActive(true);
+				}
 			}
 		}
-		System.out.println("NbrOfActiveQR: "+activeCount);
 		
-		while(activeCount < Constants.MAX_ACTIVE){
+		System.out.println(id+" is type "+type);
+		
+		//getActiveTreasureCount();
+		
+		//generateTreasureLocations();
+		
+		/*
+		int typeInt = Integer.parseInt(type);
+		boolean active;
+		if(Integer.parseInt(type) == 0){
+			active = false;
+		} else {
+			active = true;
+		}
+
+		switch (id){
+			case "TL01":
+				treasureLocations.get(0).setType(typeInt);
+				treasureLocations.get(0).setActive(active);
+				break;
+			case "TL02":
+				treasureLocations.get(1).setType(2);
+				//treasureLocations.get(1).setActive(active);
+				break;
+			case "TL03":
+				treasureLocations.get(2).setType(1);
+				//treasureLocations.get(2).setActive(active);
+				break;
+			case "TL04":
+				treasureLocations.get(3).setType(2);
+				//treasureLocations.get(3).setActive(active);
+				break;
+			case "TL05":
+				treasureLocations.get(4).setType(1);
+				//treasureLocations.get(4).setActive(active);
+				break;	
+		}
+		*/
+	}
+	
+	public void updateActiveTreasureCount(){
+		activeTreasureCount = 0;		
+		for (TreasureLocation tl : treasureLocations){
+			if(tl.getActive()){
+				activeTreasureCount++;
+				System.out.println(tl.getId()+" is active");
+			}
+		}	
+		System.out.println("activeTreasureCount: "+activeTreasureCount);
+	}
+	
+	
+	//Must run AFTER the treasureLocationsArray has been updated
+	public void generateTreasureLocations(){
+		
+		while(activeTreasureCount < Constants.MAX_ACTIVE){
 			int item = generateRandomTreasureLocation();
 			int type = generateRandomTreasureType();
 
@@ -92,11 +160,14 @@ public class Logic {
 			} else { //not active, sets to active and give random type
 				treasureLocations.get(item).setActive(true);
 				treasureLocations.get(item).setType(type);
-				activeCount++;
+				updateActiveTreasureCount();
 				System.out.println("New treasure generated: "+treasureLocations.get(item).getId()+" "+treasureLocations.get(item).getType());
 			}
 		}
 	}
+	
+	
+	
 	
 	public void generateTreasureLocation(){
 		for (TreasureLocation tl : treasureLocations){
@@ -131,9 +202,9 @@ public class Logic {
 	}
 	
 	//Returns a char which in turn can be converted to an int
-	public char extractType(String str){
+	public String extractType(String str){
 		char type = str.charAt(8);	
-		return type;
+		return ""+type;
 	}
 	
 	public void updateFirebase(){
@@ -149,10 +220,15 @@ public class Logic {
 			if(tl.getActive()){
 				int x = tl.getPosX();
 				int y = tl.getPosY();
-				//hur skriver vi dessa till en punkt på kartan?
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
 	
 	public void updateInfo(){
 		for (TreasureLocation tl : treasureLocations){

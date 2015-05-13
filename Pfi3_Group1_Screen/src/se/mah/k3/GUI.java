@@ -43,9 +43,28 @@ public class GUI extends JFrame {
 		Logic logic = new Logic();
 		
 		//These methods are probably just for testing
+		logic.updateActiveTreasureCount();
 		logic.generateTreasureLocations();
 		logic.updateFirebase();
-		logic.updateInfo();
+		//logic.updateInfo();
+		//drawMarkers();
 	}
+	
+	public static void drawMarkers(){
+		
+		for (TreasureLocation tl : Logic.treasureLocations){
+			if(tl.getActive()){
+				int x = tl.getPosX();
+				int y = tl.getPosY();
+				placeMarker(x,y);
+				System.out.println(x+" "+y);
+			}
+		}
+	}
+	
+	public static void placeMarker(int x, int y){
+		
+	}
+	
 
 }
