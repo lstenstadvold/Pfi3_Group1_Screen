@@ -6,6 +6,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
 
 public class GUI extends JFrame {
 
@@ -33,12 +35,18 @@ public class GUI extends JFrame {
 	 * Create the frame.
 	 */
 	public GUI() {
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 0, 2020, 1180);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(GUI.class.getResource("/res/Treesure_Mockup_Main_Screen.png")));
+		label.setBounds(0, 0, 2014, 1195);
+		contentPane.add(label);
 		
 		Logic logic = new Logic();
 		
@@ -47,5 +55,4 @@ public class GUI extends JFrame {
 		logic.updateFirebase();
 		logic.updateInfo();
 	}
-
 }
