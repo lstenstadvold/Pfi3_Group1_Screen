@@ -44,7 +44,7 @@ public class GUI extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(GUI.class.getResource("/res/Treesure_Mockup_Main_Screen.png")));
+		label.setIcon(new ImageIcon(GUI.class.getResource("/res/MainScreenMockupV2.png")));
 		label.setBounds(0, 0, 2014, 1195);
 		contentPane.add(label);
 		
